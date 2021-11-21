@@ -1,5 +1,6 @@
 import Head from 'next/head'
 import Link from 'next/link'
+import Button from '@mui/material/Button';
 
 import Date from '../components/date'
 import Layout, { siteTitle } from '../components/layout'
@@ -23,6 +24,11 @@ const Home = ({ allPostsData }) => {
           </Head>
           <section className={utilStyles.headingMd}>
             <p>Hello, I'm Wyatt. Welcome to my blog that I created with Next.JS.</p>
+          </section>
+          <section>
+            <Link href={`/create-post`}>
+              <Button variant="outlined">Create New Post</Button>
+            </Link>
           </section>
           <section className={`${utilStyles.headingMd} ${utilStyles.padding1px}`}>
             <h2 className={utilStyles.headingLg}>Blog</h2>

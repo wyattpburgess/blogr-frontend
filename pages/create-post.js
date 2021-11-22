@@ -1,21 +1,19 @@
 import { useState } from 'react';
 import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
-import DatePicker from '@mui/lab/DatePicker';
-import AdapterDateFns from '@mui/lab/AdapterDateFns';
-import LocalizationProvider from '@mui/lab/LocalizationProvider';
+import Alert from '@mui/material/Alert';
+import AlertTitle from '@mui/material/AlertTitle';
 
+import TextEditor from '../components/form/TextEditor';
 import Layout from '../components/layout';
 import Head from 'next/head';
 import useInput from '../hooks/use-input';
 
-// import { createPost } from '../lib/posts';
-import utilStyles from '../styles/utils.module.scss';
-
-export default function CreatePost() {
+const CreatePost = () => {
   const isNotEmpty = value => value.trim() !== '';
-  const isDate = value => typeof(value) === Date;
-  
+
+  const [formError, setFormError] = useState(false);
+
   const {
     value: titleValue,
     hasError: titleHasError,
@@ -25,45 +23,37 @@ export default function CreatePost() {
     reset: resetTitle
   } = useInput(isNotEmpty);
 
-  const {
-    value: dateValue,
-    hasError: dateHasError,
-    valueIsValid: dateIsValid,
-    valueChangeHandler: dateChangeHandler,
-    inputBlurHandler: dateBlurHandler,
-    reset: resetDate
-  } = useInput(isDate);
+  const [bodyValue, setBodyValue] = useState('');
 
-  const {
-    value: bodyValue,
-    hasError: bodyHasError,
-    valueIsValid: bodyIsValid,
-    valueChangeHandler: bodyChangeHandler,
-    inputBlurHandler: bodyBlurHandler,
-    reset: resetBody
-  } = useInput(isNotEmpty);
-
+  const formIsValid = titleIsValid;
+  console.log(formIsValid);
   const [submissionData, setSubmissionData] = useState(null);
 
   const submitHandler = (e) => {
     e.preventDefault();
-    const requestOptions = {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ 
-        title: titleValue,
-        date: dateValue,
-        body: bodyValue
-      })
+    if (formIsValid) {
+      const requestOptions = {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ 
+          title: titleValue,
+          body: bodyValue
+        })
+      }
+      fetch('http://localhost:8080/post/add-new', requestOptions)
+        .then(response => response.json())
+        .then(data => {
+          setSubmissionData(data);
+          resetTitle();
+          setBodyValue('');
+        })
+        .catch(err => {
+          console.log(err);
+        })
     }
-    fetch('http://localhost:8080/post/add-new', requestOptions)
-      .then(response => response.json())
-      .then(data => {
-        setSubmissionData(data);
-      })
-      .catch(err => {
-        console.log(err);
-      })
+    else {
+      setFormError(true);
+    }
   }
   
   return (
@@ -71,7 +61,22 @@ export default function CreatePost() {
       <Head>
         <title>Create Post</title>
       </Head>
-      { submissionData && <p>Success!</p> }
+      { formError && 
+        <div className="form-element-wrapper">
+          <Alert severity="error">
+            <AlertTitle>Error</AlertTitle>
+            Please validate form fields and try resubmitting.
+          </Alert>
+        </div>
+      }
+      { submissionData && 
+        <div className="form-element-wrapper">
+          <Alert severity="success">
+            <AlertTitle>Post Created</AlertTitle>
+            Your post was successfully screated!
+          </Alert>
+        </div>
+      }
       <form onSubmit={submitHandler}>
         <div className="form-element-wrapper">
           <TextField 
@@ -82,41 +87,18 @@ export default function CreatePost() {
             id="title" 
             label="Title" 
             variant="outlined" 
+            className="form-input"
             error={titleHasError && "error"}
             helperText={titleHasError && "Please enter a value"}
           />
         </div>
         <div className="form-element-wrapper">
-          <LocalizationProvider dateAdapter={AdapterDateFns}>
-            <DatePicker
-              onChange={dateChangeHandler}
-              onBlur={dateBlurHandler}
-              value={dateValue}
-              name="date"
-              id="date"
-              label="Date"
-              renderInput={(params) => <TextField {...params} />}
-              error={dateHasError && "error"}
-              helperText={dateHasError && "Please enter a value"}
-            />
-          </LocalizationProvider>
-        </div>
-        <div className="form-element-wrapper">
-          <TextField
-            onChange={bodyChangeHandler}
-            onBlur={bodyBlurHandler}
-            value={bodyValue}
-            id="body"
-            name="body" 
-            placeholder="Enter a blog post here..."
-            multiline
-            rows={8}
-            error={bodyHasError && "error"}
-            helperText={bodyHasError && "Please enter a value"}
-          />
+          <TextEditor value={bodyValue} setBodyValue={setBodyValue} />
         </div>
         <Button type="submit" variant="contained">Submit</Button>
       </form>
     </Layout>
   )
 }
+
+export default CreatePost;

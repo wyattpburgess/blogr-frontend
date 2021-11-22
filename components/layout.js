@@ -11,7 +11,7 @@ export default function Layout({ children, home }) {
   return (
     <div className={styles.container}>
       <Head>
-        <link rel="icon" href="public/images/profile.jpeg" />
+        <link rel="icon" href="favicon.ico" />
       </Head>
       <header className={styles.header}>
         {home ? (

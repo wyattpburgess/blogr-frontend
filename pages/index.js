@@ -21,6 +21,7 @@ const Home = ({ allPostsData }) => {
         <Layout home>
           <Head>
             <title>{siteTitle}</title>
+            <meta charset="utf-8" />
           </Head>
           <section className={utilStyles.headingMd}>
             <p>Hello, I'm Wyatt. Welcome to my blog that I created with Next.JS.</p>

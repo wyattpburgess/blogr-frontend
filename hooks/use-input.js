@@ -36,10 +36,12 @@ const useInput = (validateValue) => {
   
   const valueChangeHandler = (event) => {
     let value = null;
-    if (typeof(event.target) === 'undefined') {
-      value = event;
-    } else {
-      value = event.target.value;
+    if (event !== null ) {
+      if (typeof(event.target) === 'undefined') {
+        value = event;
+      } else {
+        value = event.target.value;
+      }
     }
     dispatch({type: 'INPUT', value: value});
   }

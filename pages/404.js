@@ -1,7 +1,7 @@
-import Layout from '../components/layout'
-import Head from 'next/head'
+import Layout from "../components/layout";
+import Head from "next/head";
 
-export default function Custom404() {
+export const Custom404 = () => {
   return (
     <Layout>
       <Head>
@@ -9,5 +9,7 @@ export default function Custom404() {
       </Head>
       <h1>404 - Page Not Found</h1>
     </Layout>
-    )
-}
+  );
+};
+
+export default Custom404;

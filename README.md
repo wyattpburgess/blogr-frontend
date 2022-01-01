@@ -1,1 +1,1 @@
-# My Blog - Next.JS
+# My Blog Front-end - Next.JS

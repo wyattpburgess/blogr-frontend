@@ -8,6 +8,7 @@ import TextEditor from "../components/form/TextEditor";
 import Layout from "../components/layout";
 import Head from "next/head";
 import useInput from "../hooks/use-input";
+import { createPost } from "../lib/posts";
 
 const CreatePost = () => {
   const isNotEmpty = (value) => value.trim() !== "";
@@ -28,27 +29,13 @@ const CreatePost = () => {
   const formIsValid = titleIsValid;
   const [submissionData, setSubmissionData] = useState(null);
 
-  const submitHandler = (e) => {
+  const submitHandler = async (e) => {
     e.preventDefault();
     if (formIsValid) {
-      const requestOptions = {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          title: titleValue,
-          body: bodyValue,
-        }),
-      };
-      fetch("http://localhost:8080/post/add-new", requestOptions)
-        .then((response) => response.json())
-        .then((data) => {
-          setSubmissionData(data);
-          resetTitle();
-          setBodyValue("");
-        })
-        .catch((err) => {
-          console.log(err);
-        });
+      const data = await createPost({ titleValue, bodyValue });
+      setSubmissionData(data);
+      resetTitle();
+      setBodyValue("");
     } else {
       setFormError(true);
     }
